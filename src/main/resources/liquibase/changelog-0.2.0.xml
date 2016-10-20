@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet id="Changelog_5.0" author="YuriyLevchuk">
+        <comment>Create Categories table</comment>
+        <sql>
+            CREATE TABLE categories(
+            category_id SERIAL NOT NULL,
+            category_name VARCHAR(155) NOT NULL,
+            CONSTRAINT category_pk PRIMARY KEY (category_id)
+            );
+
+        </sql>
+
+        <rollback>
+            DROP TABLE categories;
+        </rollback>
+
+    </changeSet>
+
+    <changeSet id="Changelog_6.0" author="YuriyLevchuk">
+        <comment>Filling Categories table with boilerplate data</comment>
+        <sql>
+            INSERT INTO categories (category_name) VALUES ('FirstPriority');
+            INSERT INTO categories (category_name) VALUES ('SecondPriority');
+            INSERT INTO categories (category_name) VALUES ('ThirdPriority');
+            INSERT INTO categories (category_name) VALUES ('FourthPriority');
+
+        </sql>
+
+        <rollback>
+            DELETE FROM categories WHERE category_name IN ('FirstPriority', 'SecondPriority', 'ThirdPriority',
+            'FourthPriority');
+        </rollback>
+
+    </changeSet>
+
+    <changeSet id="Changelog_7.0" author="YuriyLevchuk">
+        <comment>Adition of the Categories in the Hardware table</comment>
+
+        <sql>
+
+            ALTER TABLE hardware ADD COLUMN category_id INTEGER;
+
+        </sql>
+
+        <rollback>
+            ALTER TABLE hardware DROP COLUMN category_id;
+        </rollback>
+
+    </changeSet>
+
+    <changeSet id="Changelog_8.0" author="YuriyLevchuk">
+        <comment>Creating foreign key in the Hardware table</comment>
+
+        <sql>
+
+            ALTER TABLE hardware ADD CONSTRAINT comp_fk FOREIGN KEY (category_id) REFERENCES categories (category_id)
+            MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE;
+
+        </sql>
+
+        <rollback>
+            ALTER TABLE hardware DROP CONSTRAINT comp_fk;
+        </rollback>
+
+    </changeSet>
+
+    <changeSet id="Changelog_9.0" author="YuriyLevchuk">
+        <comment>Adding values from categories_id into hardware table</comment>
+
+        <sql>
+            UPDATE hardware SET category_id='1' WHERE computer_id=1;
+            UPDATE hardware SET category_id='2' WHERE computer_id=2;
+            UPDATE hardware SET category_id='2' WHERE computer_id=3;
+            UPDATE hardware SET category_id='2' WHERE computer_id=4;
+            UPDATE hardware SET category_id='3' WHERE computer_id=5;
+            UPDATE hardware SET category_id='3' WHERE computer_id=6;
+            UPDATE hardware SET category_id='3' WHERE computer_id=7;
+
+        </sql>
+
+        <rollback>
+            UPDATE hardware SET category_id = NULL WHERE computer_id IN (1, 2, 3, 4, 5, 6, 7);
+        </rollback>
+
+    </changeSet>
+
+    <changeSet id="Changelog_10.0" author="YuriyLevchuk">
+        <comment> Update values amid adition it from categories_id into hardware table</comment>
+
+        <sql>
+            UPDATE hardware SET category_id='1' WHERE computer_id=1;
+            UPDATE hardware SET category_id='2' WHERE computer_id=2;
+            UPDATE hardware SET category_id='2' WHERE computer_id=3;
+            UPDATE hardware SET category_id='2' WHERE computer_id=4;
+            UPDATE hardware SET category_id='3' WHERE computer_id=5;
+            UPDATE hardware SET category_id='3' WHERE computer_id=6;
+            UPDATE hardware SET category_id='4' WHERE computer_id=7;
+
+        </sql>
+
+        <rollback>
+            UPDATE hardware SET category_id = NULL WHERE computer_id IN (1, 2, 3, 4, 5, 6, 7);
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet id="Changelog_1.0" author="YuriyLevchuk">
+        <comment>Create Product table</comment>
+
+        <sql>
+            CREATE TABLE hardware(
+            computer_id SERIAL NOT NULL,
+            computer_name VARCHAR(50) NOT NULL,
+            computer_price INTEGER NOT NULL,
+            computer_supplier VARCHAR(50),
+            supplier_address VARCHAR(80) NOT NULL,
+            CONSTRAINT comp_pk PRIMARY KEY (computer_id)
+            );
+
+        </sql>
+
+        <rollback>
+            DROP TABLE hardware;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="Changelog_2.0" author="YuriyLevchuk">
+        <comment>Filling the Product table with the boilerplate data</comment>
+
+        <sql>
+            INSERT INTO hardware (computer_name, computer_price, computer_supplier, supplier_address)
+            VALUES ('Apple', 200, 'Darvin LTD', 'Lepse, 20');
+            INSERT INTO hardware (computer_name, computer_price, computer_supplier, supplier_address)
+            VALUES ('Samsung', 100, 'Terekon LTD', 'Antonovicha, 4');
+            INSERT INTO hardware (computer_name, computer_price, computer_supplier, supplier_address)
+            VALUES ('HP', 250, 'ALukobest', 'Proreznaya, 12');
+            INSERT INTO hardware (computer_name, computer_price, computer_supplier, supplier_address)
+            VALUES ('DELL', 210, 'DELL LTD', 'Suvorova, 25');
+            INSERT INTO hardware (computer_name, computer_price, computer_supplier, supplier_address)
+            VALUES ('ASUS', 50, 'Asus LTD', 'Kikvidze, 18');
+            INSERT INTO hardware (computer_name, computer_price, computer_supplier, supplier_address)
+            VALUES ('IBM', 330, 'Kvazar Micro', 'Sherbakova, 40');
+            INSERT INTO hardware (computer_name, computer_price, computer_supplier, supplier_address)
+            VALUES ('LENOVO', 180, 'Lonovo llc', 'pr.Kamarova, 34');
+
+        </sql>
+
+        <rollback>
+            DELETE FROM hardware WHERE computer_price IN (200, 100, 250, 210, 50, 330, 180);
+        </rollback>
+    </changeSet>
+
+    <changeSet id="Changelog_3.0" author="YuriyLevchuk">
+        <comment>Add new column to the hardware table</comment>
+
+        <sql>
+            ALTER TABLE hardware ADD COLUMN computer_customer VARCHAR(50);
+        </sql>
+
+        <rollback>
+            ALTER TABLE hardware DROP COLUMN computer_customer;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="Changelog_4.0" author="YuriyLevchuk">
+    <comment>Add data into the computerCustomer column</comment>
+        <sql>
+            UPDATE hardware SET computer_customer='KPI' WHERE computer_id=1;
+            UPDATE hardware SET computer_customer='Comfy' WHERE computer_id=2;
+            UPDATE hardware SET computer_customer='Foxtrot' WHERE computer_id=3;
+            UPDATE hardware SET computer_customer='Eldorado' WHERE computer_id=4;
+            UPDATE hardware SET computer_customer='CityCom' WHERE computer_id=5;
+            UPDATE hardware SET computer_customer='Microsoft' WHERE computer_id=6;
+            UPDATE hardware SET computer_customer='Mtropoliten' WHERE computer_id=7;
+
+        </sql>
+
+        <rollback>
+            UPDATE hardware SET computer_customer = NULL WHERE computer_id IN (1, 2, 3, 4, 5, 6, 7);
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
